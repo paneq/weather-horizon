@@ -3,11 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weather Horizon — a TRMNL weather plugin</title>
-<meta name="description" content="The next 24 hours and the coming days on one fixed temperature scale. A weather plugin for TRMNL e-ink displays.">
-<meta property="og:title" content="Weather Horizon">
-<meta property="og:description" content="The next 24 hours and the coming days on one fixed temperature scale, for TRMNL e-ink displays.">
-<meta property="og:image" content="img/hero-x.png">
+<title>Weather Horizon — weather forecast plugin for TRMNL e-ink displays</title>
+<meta name="description" content="A free weather plugin for TRMNL e-ink displays: the next 24 hours and the coming days on one fixed temperature scale. For TRMNL OG and X, every layout, 10 languages.">
+<meta name="author" content="Robert Pankowecki">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://paneq.github.io/weather-horizon/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f3f1ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Weather Horizon">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://paneq.github.io/weather-horizon/">
+<meta property="og:title" content="Weather Horizon — a weather plugin for TRMNL">
+<meta property="og:description" content="A free weather plugin for TRMNL e-ink displays: the next 24 hours and the coming days on one fixed temperature scale. For TRMNL OG and X, every layout, 10 languages.">
+<meta property="og:image" content="https://paneq.github.io/weather-horizon/img/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Weather Horizon on a TRMNL X e-ink display: a 24-hour temperature curve and six days of min–max bars on one fixed scale">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Weather Horizon — a weather plugin for TRMNL">
+<meta name="twitter:description" content="A free weather plugin for TRMNL e-ink displays: the next 24 hours and the coming days on one fixed temperature scale. For TRMNL OG and X, every layout, 10 languages.">
+<meta name="twitter:image" content="https://paneq.github.io/weather-horizon/img/og.png">
+<meta name="twitter:image:alt" content="Weather Horizon on a TRMNL X e-ink display: a 24-hour temperature curve and six days of min–max bars on one fixed scale">
+<link rel="preload" as="image" href="img/hero-x.png" fetchpriority="high">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Weather Horizon","url":"https://paneq.github.io/weather-horizon/","description":"A free weather plugin for TRMNL e-ink displays: the next 24 hours and the coming days on one fixed temperature scale. For TRMNL OG and X, every layout, 10 languages.","applicationCategory":"UtilitiesApplication","applicationSubCategory":"Weather","operatingSystem":"TRMNL","image":"https://paneq.github.io/weather-horizon/img/og.png","screenshot":["https://paneq.github.io/weather-horizon/img/hero-x.png","https://paneq.github.io/weather-horizon/img/summer-og.png","https://paneq.github.io/weather-horizon/img/winter-og.png","https://paneq.github.io/weather-horizon/img/layouts-x.png"],"inLanguage":["en","de","fr","es","it","nl","pt","pl","uk","ja"],"isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Robert Pankowecki","url":"https://pankowecki.pl/"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -29,6 +50,7 @@
   a:hover { text-decoration-color: currentColor; }
 
   header.hero { padding: 96px 0 40px; text-align: center; }
+  .eyebrow a { text-decoration: none; } .eyebrow a:hover { text-decoration: underline; }
   .eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 18px; }
   h1 { font: 400 clamp(56px, 9vw, 104px)/0.95 "Instrument Serif", Georgia, serif; letter-spacing: -0.02em; margin: 0; }
   h1 em { font-style: italic; }
@@ -70,6 +92,10 @@
   .langs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding: 0; list-style: none; }
   .langs li { font-size: 14px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper-2); }
 
+  .cta { text-align: center; }
+  .cta p { margin: 0 auto 28px; }
+  .button { display: inline-block; padding: 14px 26px; border-radius: 999px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 600; font-size: 16px; }
+  .button:hover { background: var(--accent); color: #fff; }
   footer { margin-top: 140px; padding: 36px 0 56px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink-2); }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 
@@ -95,10 +121,10 @@
 <body>
 <header class="hero">
   <div class="wrap">
-    <p class="eyebrow">A weather plugin for TRMNL</p>
+    <p class="eyebrow">A weather plugin for <a href="https://trmnl.com/?ref=rupert" rel="sponsored">TRMNL</a></p>
     <h1>Weather <em>Horizon</em></h1>
     <p class="lede">The next 24 hours and the coming days on one fixed temperature scale — so a warm week looks warm and a cold one looks cold.</p>
-    <ul class="facts"><li>TRMNL OG &amp; X</li><li>Every layout</li><li>10 languages</li><li>No API key</li></ul>
+    <ul class="facts"><li>TRMNL OG &amp; X</li><li>Every layout</li><li>10 languages</li></ul>
     <figure class="device device--x hero-shot">
       <div class="screen-box">
         <img class="" src="img/hero-x.png" width="1872" height="1404" alt="Weather Horizon on a TRMNL X: current conditions, a 24-hour temperature curve and six days of min–max bars" fetchpriority="high" decoding="async">
@@ -106,7 +132,7 @@
         <span class="pin" style="left:23.41%;top:48.27%" aria-hidden="true">2</span>
         <span class="pin" style="left:31.9%;top:31.52%" aria-hidden="true">3</span>
         <span class="pin" style="left:71.16%;top:37.92%" aria-hidden="true">4</span>
-        <span class="pin" style="left:6.23%;top:25.06%" aria-hidden="true">5</span>
+        <span class="pin" style="left:96.25%;top:67.37%" aria-hidden="true">5</span>
       </div>
     </figure>
     <ol class="legend">
@@ -114,7 +140,7 @@
       <li><b>Next 24 hours</b>An hourly curve with values on round hours, plus the warmest and coldest hour.</li>
       <li><b>Night</b>Shaded from sunset to sunrise, so the daily rhythm reads at a glance.</li>
       <li><b>Coming days</b>Min–max bars on the same axis. A darker fill means rougher weather.</li>
-      <li><b>Fixed scale</b>−10 to 35 °C by default. It only widens, in 5° steps, when the forecast leaves it.</li>
+      <li><b>Fixed scale</b>−10 to 35 °C by default, with the dashed freezing line always in the same place. It only widens, in 5° steps, when the forecast leaves it.</li>
     </ol>
   </div>
 </header>
@@ -164,7 +190,7 @@
         <div><b>Range</b><span>12 to 48 hours ahead · 3 to 7 days</span></div>
         <div><b>Scale</b><span>Set your own fixed minimum and maximum</span></div>
         <div><b>Location</b><span>Search any city, or paste coordinates</span></div>
-        <div><b>Data</b><span>Open-Meteo forecasts, refreshed hourly, no account needed</span></div>
+        <div><b>Data</b><span>Open-Meteo forecasts, refreshed every 30 minutes</span></div>
       </div>
       <ul class="langs" aria-label="Languages">
         <li>English</li><li>Deutsch</li><li>Français</li><li>Español</li><li>Italiano</li><li>Nederlands</li><li>Português</li><li>Polski</li><li>Українська</li><li>日本語</li>
@@ -172,12 +198,20 @@
       <p class="cap" style="text-align:left;margin-top:12px">By default the plugin follows your TRMNL account language.</p>
     </div>
   </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <h2>Put it on <em>your desk</em></h2>
+      <p>Weather Horizon runs on TRMNL, a calm e-ink display that shows what matters without a glowing screen.</p>
+      <a class="button" href="https://trmnl.com/?ref=rupert" rel="sponsored">Get a TRMNL →</a>
+    </div>
+  </section>
 </main>
 
 <footer>
   <div class="wrap">
     <span>Made by Robert Pankowecki · <a href="https://pankowecki.pl/">pankowecki.pl</a></span>
-    <span>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0) · Screens rendered with the TRMNL framework</span>
+    <span>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0) · Screens rendered with the <a href="https://trmnl.com/?ref=rupert" rel="sponsored">TRMNL</a> framework</span>
   </div>
 </footer>
 </body>
