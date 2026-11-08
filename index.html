@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weather Horizon — a TRMNL weather plugin</title>
+<meta name="description" content="The next 24 hours and the coming days on one fixed temperature scale. A weather plugin for TRMNL e-ink displays.">
+<meta property="og:title" content="Weather Horizon">
+<meta property="og:description" content="The next 24 hours and the coming days on one fixed temperature scale, for TRMNL e-ink displays.">
+<meta property="og:image" content="img/hero-x.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3f1ec; --paper-2: #e9e6df; --ink: #151514; --ink-2: #57554f; --rule: #d9d5cc;
+    --accent: #c4462a; --frame-x: linear-gradient(155deg, #e4e3df, #c3c2bd); --frame-og: #1c1c1e;
+    --shadow: 0 30px 60px -30px rgba(30, 25, 15, .35), 0 2px 6px rgba(30, 25, 15, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #141413; --paper-2: #1c1c1a; --ink: #f1efe9; --ink-2: #a4a199; --rule: #2e2d2a; --accent: #ec7a5c;
+            --frame-x: linear-gradient(155deg, #4a4946, #2c2b29); --frame-og: #050505;
+            --shadow: 0 30px 60px -30px rgba(0, 0, 0, .8), 0 2px 6px rgba(0, 0, 0, .4); }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 Inter, system-ui, sans-serif; font-optical-sizing: auto; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: currentColor; }
+
+  header.hero { padding: 96px 0 40px; text-align: center; }
+  .eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 18px; }
+  h1 { font: 400 clamp(56px, 9vw, 104px)/0.95 "Instrument Serif", Georgia, serif; letter-spacing: -0.02em; margin: 0; }
+  h1 em { font-style: italic; }
+  .lede { max-width: 620px; margin: 22px auto 0; font-size: 20px; line-height: 1.5; color: var(--ink-2); }
+  .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin: 26px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--ink-2); }
+  .facts li::before { content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin: 0 9px 2px 0; }
+
+  .device { position: relative; margin: 0; border-radius: 22px; box-shadow: var(--shadow); }
+  .device img { display: block; width: 100%; height: auto; background: #fff; border-radius: 4px; }
+  .device--x { background: var(--frame-x); padding: 3.6%; border-radius: 26px; }
+  .device--og { background: var(--frame-og); padding: 4.4%; border-radius: 20px; }
+  .hero-shot { margin: 48px auto 0; max-width: 980px; }
+
+  .screen-box { position: relative; }
+  .pin { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; display: grid; place-items: center;
+         background: var(--accent); color: #fff; font: 600 14px/1 Inter, sans-serif; box-shadow: 0 0 0 4px rgba(255,255,255,.85), 0 4px 10px rgba(0,0,0,.25); }
+  .legend { display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; margin: 40px auto 0; max-width: 1060px; padding: 0; list-style: none; counter-reset: c; }
+  .legend li { counter-increment: c; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .legend li::before { content: counter(c); display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+                       background: var(--accent); color: #fff; font: 600 12px/1 Inter, sans-serif; margin-bottom: 10px; }
+  .legend b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+
+  section { padding: 120px 0 0; }
+  .split { display: grid; grid-template-columns: 5fr 7fr; gap: 64px; align-items: center; }
+  .split--wide { grid-template-columns: 7fr 5fr; }
+  .intro { display: grid; grid-template-columns: 5fr 7fr; gap: 64px; align-items: start; }
+  .intro p { max-width: 52ch; }
+  h2 { font: 400 clamp(38px, 5vw, 56px)/1.02 "Instrument Serif", Georgia, serif; letter-spacing: -0.01em; margin: 0 0 18px; }
+  h2 em { font-style: italic; }
+  section p { color: var(--ink-2); margin: 0 0 14px; max-width: 44ch; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 44px; }
+  .pair figcaption, .cap { margin-top: 14px; font-size: 14px; color: var(--ink-2); text-align: center; }
+  .pair figure { margin: 0; }
+
+  .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 40px; border-top: 1px solid var(--rule); }
+  .options div { padding: 22px 24px 22px 0; border-bottom: 1px solid var(--rule); }
+  .options b { display: block; font-weight: 600; margin-bottom: 4px; }
+  .options span { color: var(--ink-2); font-size: 15px; }
+  .langs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding: 0; list-style: none; }
+  .langs li { font-size: 14px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper-2); }
+
+  footer { margin-top: 140px; padding: 36px 0 56px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink-2); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+  @media (max-width: 900px) {
+    header.hero { padding-top: 64px; }
+    .legend { grid-template-columns: 1fr 1fr; }
+    .split, .split--wide, .intro { grid-template-columns: 1fr; gap: 28px; }
+    .options { grid-template-columns: 1fr 1fr; }
+    section { padding-top: 88px; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .lede { font-size: 18px; }
+    .pair, .options { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr; gap: 16px; text-align: left; margin-top: 28px; }
+    .legend li { display: grid; grid-template-columns: 24px 1fr; column-gap: 14px; }
+    .legend li::before { margin: 2px 0 0; grid-row: span 2; }
+    .facts { gap: 6px 16px; }
+    .pin { width: 22px; height: 22px; margin: -11px 0 0 -11px; font-size: 11px; box-shadow: 0 0 0 3px rgba(255,255,255,.85); }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">A weather plugin for TRMNL</p>
+    <h1>Weather <em>Horizon</em></h1>
+    <p class="lede">The next 24 hours and the coming days on one fixed temperature scale — so a warm week looks warm and a cold one looks cold.</p>
+    <ul class="facts"><li>TRMNL OG &amp; X</li><li>Every layout</li><li>10 languages</li><li>No API key</li></ul>
+    <figure class="device device--x hero-shot">
+      <div class="screen-box">
+        <img class="" src="img/hero-x.png" width="1872" height="1404" alt="Weather Horizon on a TRMNL X: current conditions, a 24-hour temperature curve and six days of min–max bars" fetchpriority="high" decoding="async">
+        <span class="pin" style="left:5.81%;top:44.42%" aria-hidden="true">1</span>
+        <span class="pin" style="left:23.41%;top:48.27%" aria-hidden="true">2</span>
+        <span class="pin" style="left:31.9%;top:31.52%" aria-hidden="true">3</span>
+        <span class="pin" style="left:71.16%;top:37.92%" aria-hidden="true">4</span>
+        <span class="pin" style="left:6.23%;top:25.06%" aria-hidden="true">5</span>
+      </div>
+    </figure>
+    <ol class="legend">
+      <li><b>Right now</b>The ring marks the current temperature; the header adds feels-like, wind and today’s range.</li>
+      <li><b>Next 24 hours</b>An hourly curve with values on round hours, plus the warmest and coldest hour.</li>
+      <li><b>Night</b>Shaded from sunset to sunrise, so the daily rhythm reads at a glance.</li>
+      <li><b>Coming days</b>Min–max bars on the same axis. A darker fill means rougher weather.</li>
+      <li><b>Fixed scale</b>−10 to 35 °C by default. It only widens, in 5° steps, when the forecast leaves it.</li>
+    </ol>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="intro">
+        <h2>One scale, <em>every season</em></h2>
+        <div>
+          <p>Most weather charts stretch their axis to fit the data, so a mild day and a heatwave look the same. Weather Horizon keeps the axis still.</p>
+          <p>July sits high, January sits low, and the dashed freezing line is always in the same place — readable from across the room.</p>
+        </div>
+      </div>
+      <div class="pair">
+          <figure>
+            <div class="device device--og"><img class="" src="img/summer-og.png" width="800" height="480" alt="Summer forecast on a TRMNL OG: temperatures in the twenties near the top of the scale" loading="lazy" decoding="async"></div>
+            <figcaption>Summer, Wrocław</figcaption>
+          </figure>
+          <figure>
+            <div class="device device--og"><img class="" src="img/winter-og.png" width="800" height="480" alt="Winter forecast on a TRMNL OG: temperatures around zero and below near the bottom of the scale" loading="lazy" decoding="async"></div>
+            <figcaption>Winter, Wrocław</figcaption>
+          </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="split split--wide">
+        <figure class="device device--x"><img class="" src="img/layouts-x.png" width="1872" height="1404" alt="Four Weather Horizon quadrants in a TRMNL X mashup" loading="lazy" decoding="async"></figure>
+        <div>
+          <h2>Made for <em>e-ink</em></h2>
+          <p>Crisp 1-bit patterns on the TRMNL OG, sixteen shades of gray on the TRMNL X, and pixel-perfect type on both.</p>
+          <p>Full screen, half screen, quadrants and portrait all work. Narrower layouts simply show fewer hours and days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Make it <em>yours</em></h2>
+      <div class="options">
+        <div><b>Units</b><span>°C or °F · km/h, m/s, mph or knots · mm or inches</span></div>
+        <div><b>Time</b><span>24-hour or 12-hour clock</span></div>
+        <div><b>Range</b><span>12 to 48 hours ahead · 3 to 7 days</span></div>
+        <div><b>Scale</b><span>Set your own fixed minimum and maximum</span></div>
+        <div><b>Location</b><span>Search any city, or paste coordinates</span></div>
+        <div><b>Data</b><span>Open-Meteo forecasts, refreshed hourly, no account needed</span></div>
+      </div>
+      <ul class="langs" aria-label="Languages">
+        <li>English</li><li>Deutsch</li><li>Français</li><li>Español</li><li>Italiano</li><li>Nederlands</li><li>Português</li><li>Polski</li><li>Українська</li><li>日本語</li>
+      </ul>
+      <p class="cap" style="text-align:left;margin-top:12px">By default the plugin follows your TRMNL account language.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Made by Robert Pankowecki · <a href="https://pankowecki.pl/">pankowecki.pl</a></span>
+    <span>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0) · Screens rendered with the TRMNL framework</span>
+  </div>
+</footer>
+</body>
+</html>
