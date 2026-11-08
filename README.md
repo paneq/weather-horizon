@@ -1,6 +1,6 @@
 # Weather Horizon
 
-Showcase page for **Weather Horizon**, a weather plugin for [TRMNL](https://trmnl.com) e-ink displays:
+Showcase page for **Weather Horizon**, a weather plugin for [TRMNL](https://trmnl.com/?ref=rupert) e-ink displays:
 the next hours and the next days on one chart with a fixed temperature scale.
 
 **→ https://paneq.github.io/weather-horizon/**
